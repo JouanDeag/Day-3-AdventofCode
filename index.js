@@ -1,57 +1,30 @@
-const input = require('fs').readFileSync('./data.txt', 'utf8').toString().split('\r\n');
-var [array, array2, iteration, gamma, epsilon] = [[], [], 0, [], [], []];
+const input = require('fs').readFileSync('./data.txt', 'utf8').split('\r\n');
+var [gamma, epsilon, oxy, co] = [[], [], parseInt(mostCommon(input, 0), 2), parseInt(leastCommon(input, 0), 2)];
 
 // Stage 1
-while (iteration < 12) {
-    gamma = (averageBit(input, iteration, gamma));
-    iteration++;
+for(let i = 0; i < 12; i++) {
+    let cond = input.filter(e => e.charAt(i) == '1').length > input.filter(e => e.charAt(i) == '0').length;
+    gamma.push(cond ? '1' : '0');
+    epsilon.push(cond ? '0' : '1');
 }
-gamma.forEach(e => {
-    if (e == '1') {
-        epsilon.push('0');
-    } else {
-        epsilon.push('1');
-    };
-});
-var result = parseInt(gamma.join(""), 2) * parseInt(epsilon.join(""), 2);
-console.log(result);
-
-function averageBit(input, iteration, gamma) {
-    var [zero, one] = [0, 0];
-    input.forEach(e => {
-        array = e.split("");
-        array2.push(array);
-    });
-    array2.forEach(e => {
-        if(e[iteration] == 0) {
-            zero++; 
-        } else if(e[iteration] == 1) {
-            one++;
-        };
-    });
-    
-    if (parseInt(zero) > parseInt(one)) {
-        gamma.push('0');
-    } else if (parseInt(zero) < parseInt(one)) {
-        gamma.push('1');
-    } else {
-        gamma.push('1');
-        oxy.push('1');
-    };
-    return gamma;
-}
-
 // Stage 2
-var [oxy, index] = [[], 0];
-
-while (index < 12) {
-    
-    
-
-
-    index++;
-};
-
-console.log(oxy);
-
-
+function mostCommon(input, iteration) {
+    if (input.length == 1) return input[0];
+    var [one, zero] = [input.filter(e => e.charAt(iteration) == '1'), input.filter(e => e.charAt(iteration) == '0')];
+    if (one.length >= zero.length) {
+        return mostCommon(one, iteration + 1);
+    } else {
+        return mostCommon(zero, iteration + 1);
+    };
+}
+function leastCommon(input, iteration) {
+    if (input.length == 1) return input[0];
+    var [one, zero] = [input.filter(e => e.charAt(iteration) == '1'), input.filter(e => e.charAt(iteration) == '0')];
+    if (one.length < zero.length) {
+        return leastCommon(one, iteration + 1);
+    } else {
+        return leastCommon(zero, iteration + 1);
+    };
+}
+console.log('Stage 1: ' + parseInt(gamma.join(""), 2) * parseInt(epsilon.join(""), 2));
+console.log('Stage 2: ' + oxy * co);
